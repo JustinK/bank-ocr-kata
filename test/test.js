@@ -4,7 +4,7 @@ const rawDigits = require('../rawDigits');
 
 describe('Testing PolicyNumber methods', function () {
   describe('parseLines()', function () {
-    it('should return 012345678', function () {
+    it('should return 012345678 ERR', function () {
       const policyNumber = new PolicyNumber();
       const lines = {
         0: '                           ',
@@ -13,7 +13,7 @@ describe('Testing PolicyNumber methods', function () {
         3: '|_|  ||_  _|  | _||_|  ||_|',
       };
       const number = policyNumber.parseLines(lines);
-      assert.equal(number, '012345678');
+      assert.equal(number, '012345678 ERR');
     });
     it('should return 008008000', function () {
       const policyNumber = new PolicyNumber();
@@ -26,7 +26,18 @@ describe('Testing PolicyNumber methods', function () {
       const number = policyNumber.parseLines(lines);
       assert.equal(number, '008008000');
     });
-    it('should return "unable to parse"', function () {
+    it('should return 008008000 ILL', function () {
+      const policyNumber = new PolicyNumber();
+      const lines = {
+        0: '                           ',
+        1: ' _     _  _  _  _  _     _ ',
+        2: '| || ||_|| || ||_|| || || |',
+        3: '|_||_||_||_||_||_||_||_||_|',
+      };
+      const number = policyNumber.parseLines(lines);
+      assert.equal(number, '0?80080?0 ILL');
+    });
+    it('should return ?????????', function () {
       const policyNumber = new PolicyNumber();
       const lines = {
         0: '                           ',
@@ -35,7 +46,7 @@ describe('Testing PolicyNumber methods', function () {
         3: '|_||_||_||_||_||_||_||_||_|',
       };
       const number = policyNumber.parseLines(lines);
-      assert.equal(number, 'unable to parse');
+      assert.equal(number, '?????????');
     });
   });
 

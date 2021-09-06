@@ -18,6 +18,11 @@ async function processPolicyNumberList() {
     input: fs.createReadStream(filePath),
   });
 
+  // open file write stream to write to as policy numbers are parsed
+  const writer = fs.createWriteStream(`output/${Date.now()}_output.text`, {
+    flags: 'a',
+  });
+
   // go through each line in file and on each 4th line parse the input
   lineReader.on('line', (line) => {
     lines[policyLineCount] = line;
@@ -25,7 +30,7 @@ async function processPolicyNumberList() {
       lines[policyLineCount] = line;
       const policyNumber = new PolicyNumber();
       const number = policyNumber.parseLines(lines);
-      console.log(`${number}`);
+      writer.write(`${number}\r\n`);
 
       //reset 'lines' & 'policyLineCount' for next policy number in file
       Object.keys(lines).forEach((key) => (lines[key] = null));
