@@ -1,0 +1,19 @@
+{
+  "name": "kin-ocr-challenge",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JustinK/kin-ocr-challenge.git"
+  },
+  "author": "Justin Kelly",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JustinK/kin-ocr-challenge/issues"
+  },
+  "homepage": "https://github.com/JustinK/kin-ocr-challenge#readme"
+}
