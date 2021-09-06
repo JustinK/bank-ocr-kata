@@ -1,1 +1,1 @@
-# kin-ocr-challenge
+# Kin OCR Challenge
