@@ -1,11 +1,16 @@
 const rawDigits = require('./rawDigits');
 
 module.exports = class PolicyNumber {
+  statuses = {
+    Illegal: 'ILL',
+    Error: 'ERR',
+  };
+
   constructor() {}
 
   parseLines = (lines) => {
     if (!this.isInputValid(lines)) {
-      return 'unable to parse';
+      return '?????????';
     }
     let digits = [];
     for (let i = 0; i <= 24; i += 3) {
@@ -16,7 +21,12 @@ module.exports = class PolicyNumber {
       let digit = this.parseDigit(rawInput);
       digits.push(digit);
     }
-    return `${this.getNumber(digits)}`;
+    const status = this.getStatus(digits);
+    let returnValue = `${this.getNumber(digits)}`;
+    if (status !== '') {
+      returnValue = `${returnValue} ${status}`;
+    }
+    return returnValue;
   };
   isInputValid = (lines) => {
     // adding basic input validation
@@ -34,7 +44,15 @@ module.exports = class PolicyNumber {
   getNumber = (digits) => {
     return digits.join('');
   };
-
+  getStatus = (digits) => {
+    if (digits.includes('?')) {
+      return this.statuses.Illegal;
+    }
+    if (!this.isValid(digits)) {
+      return this.statuses.Error;
+    }
+    return '';
+  };
   isValid = (digits) => {
     return (
       digits.reduce((prev, curr, i) => {
@@ -67,6 +85,8 @@ module.exports = class PolicyNumber {
         return 8;
       case rawDigits.NINE:
         return 9;
+      default:
+        return '?';
     }
   };
 };
