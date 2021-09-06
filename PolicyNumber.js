@@ -35,6 +35,16 @@ module.exports = class PolicyNumber {
     return digits.join('');
   };
 
+  isValid = (digits) => {
+    return (
+      digits.reduce((prev, curr, i) => {
+        return (9 - i) * curr + prev;
+      }, 0) %
+        11 ===
+      0
+    );
+  };
+
   parseDigit = (input) => {
     switch (input) {
       case rawDigits.ZERO:

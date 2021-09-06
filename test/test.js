@@ -82,4 +82,18 @@ describe('Testing PolicyNumber methods', function () {
       assert.equal(digit, 9);
     });
   });
+  describe('isValid()', function () {
+    it('345882865 should return true', function () {
+      const policyNumber = new PolicyNumber();
+      assert.equal(policyNumber.isValid('345882865'.split('')), true);
+    });
+    it('457508000 should return true', function () {
+      const policyNumber = new PolicyNumber();
+      assert.equal(policyNumber.isValid('457508000'.split('')), true);
+    });
+    it('457508001 should return false', function () {
+      const policyNumber = new PolicyNumber();
+      assert.equal(policyNumber.isValid('457508001'.split('')), false);
+    });
+  });
 });
