@@ -1,0 +1,23 @@
+{
+  "name": "kin-ocr-challenge",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "test": "mocha",
+    "processor": "node main.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JustinK/kin-ocr-challenge.git"
+  },
+  "author": "Justin Kelly",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JustinK/kin-ocr-challenge/issues"
+  },
+  "homepage": "https://github.com/JustinK/kin-ocr-challenge#readme",
+  "devDependencies": {
+    "mocha": "^9.1.1"
+  }
+}
