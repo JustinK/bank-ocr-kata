@@ -45,6 +45,7 @@ export default class PolicyNumber {
     }
     return returnValue;
   };
+
   isInputValid = (lines) => {
     // TODO: add additional validation to check that only valid characters are included
     if (
@@ -60,6 +61,7 @@ export default class PolicyNumber {
   getNumber = (digits) => {
     return digits.join('');
   };
+
   getStatus = (digits) => {
     if (digits.includes('?')) {
       return this.statuses.Illegible;
@@ -69,6 +71,7 @@ export default class PolicyNumber {
     }
     return this.statuses.Valid;
   };
+
   isValid = (digits) => {
     return (
       digits.reduce((prev, curr, i) => {
@@ -152,8 +155,7 @@ export default class PolicyNumber {
           illegible.push([9]);
           break;
         case '?':
-          let alt = this.findCloseMatch(rawInputDigits[i]);
-          illegible.push(alt);
+          illegible.push(this.findCloseMatch(rawInputDigits[i]));
           break;
         default:
           break;
@@ -161,6 +163,7 @@ export default class PolicyNumber {
     }
     return { ambiguous, illegible };
   };
+
   findCloseMatch = (rawInput) => {
     // this function will compare illegible input against known valid inputs
     // count all number of matches between input and digits 0-9
@@ -218,14 +221,6 @@ export default class PolicyNumber {
     });
     return closeMatches.length >= 1 ? closeMatches : ['?'];
   };
-  findAlternateIll = (digits, illegible) => {
-    let illDigits = illegible.map((el) => el[0]);
-    if (this.isValid(illDigits)) {
-      return illDigits;
-    } else {
-      return digits;
-    }
-  };
 
   findAlternateNumber = (digits, ambiguous, currentStatus) => {
     // example:
@@ -239,6 +234,7 @@ export default class PolicyNumber {
       digits: digits,
       status: currentStatus,
     };
+    // For illegible digits find all possible permutations and find valid policy numbers
     if (currentStatus === this.statuses.Illegible) {
       let possibleNumbers = this.findAllCombinations(ambiguous);
       possibleNumbers.forEach((p) => {
@@ -247,6 +243,7 @@ export default class PolicyNumber {
         }
       });
     }
+    // For ambigious digits only replace one digit at a time
     if (currentStatus === this.statuses.Error) {
       for (let i = 0; i < digits.length; i++) {
         if (!ambiguous[i].includes(digits[i])) {
