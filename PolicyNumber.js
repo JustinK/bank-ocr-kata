@@ -5,6 +5,7 @@ module.exports = class PolicyNumber {
     Illegible: 'ILL',
     Error: 'ERR',
     Ambigious: 'AMB',
+    Valid: '',
   };
 
   constructor() {}
@@ -27,13 +28,27 @@ module.exports = class PolicyNumber {
     let status = this.getStatus(digits);
 
     // If status is 'ILL' or 'ERR' attempt to find a valid alternative
-    if (status === this.statuses.Illegible || status === this.statuses.Error) {
+    if (status !== this.statuses.Valid) {
       const alternates = this.getAlternates(digits, rawInputDigits);
-      digits = this.findAlternateIll(digits, alternates.illegible);
-      status = this.getStatus(digits);
+      if (status === this.statuses.Illegible) {
+        let tempDigits = this.findAlternateIll(digits, alternates.illegible);
+        if (this.getNumber(digits) !== this.getNumber(tempDigits)) {
+          digits = [...tempDigits];
+        }
+        status = this.getStatus(digits);
+      }
+      if (status === this.statuses.Error) {
+        let tempDigits = this.findAlternateAmb(digits, alternates.ambiguous);
+        if (tempDigits.length > 1) {
+          status = this.statuses.Ambigious;
+        } else if (this.getNumber(digits) !== this.getNumber(tempDigits[0])) {
+          digits = [...tempDigits[0]];
+        }
+      }
     }
+
     let returnValue = `${this.getNumber(digits)}`;
-    if (status !== '') {
+    if (status !== this.statuses.Valid) {
       returnValue = `${returnValue} ${status}`;
     }
     return returnValue;
@@ -60,7 +75,7 @@ module.exports = class PolicyNumber {
     if (!this.isValid(digits)) {
       return this.statuses.Error;
     }
-    return '';
+    return this.statuses.Valid;
   };
   isValid = (digits) => {
     return (
@@ -125,7 +140,7 @@ module.exports = class PolicyNumber {
           illegible.push([4]);
           break;
         case 5:
-          ambiguous.push([9]);
+          ambiguous.push([9, 6]);
           illegible.push([5]);
           break;
         case 6:
@@ -218,5 +233,31 @@ module.exports = class PolicyNumber {
     } else {
       return digits;
     }
+  };
+
+  findAlternateAmb = (digits, ambiguous) => {
+    // example:
+    // digits => [4, 9, 1, 5, 0, 8, 0, 0, 0]
+    // ambiguous digits => [[4], [8, 5], [7], [9], [8], [9, 6], [8], [8], [8]]
+    // loop through digits
+    // check if index has ambiguous options
+    // loop through options and test if resulting policy number is valid
+    let validPolicyNumbers = [];
+
+    for (let i = 0; i < digits.length; i++) {
+      if (!ambiguous[i].includes(digits[i])) {
+        for (let j = 0; j < ambiguous[i].length; j++) {
+          let tempDigits = [...digits];
+          tempDigits[i] = ambiguous[i][j];
+          if (this.isValid(tempDigits)) {
+            validPolicyNumbers.push(tempDigits);
+          }
+        }
+      }
+    }
+    if (validPolicyNumbers.length > 1) {
+      return validPolicyNumbers;
+    }
+    return [digits];
   };
 };

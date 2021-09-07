@@ -4,16 +4,16 @@ const rawDigits = require('../rawDigits');
 
 describe('Testing PolicyNumber methods', function () {
   describe('parseLines()', function () {
-    it('should return 012345678 ERR', function () {
+    it('should return 012345688 ERR', function () {
       const policyNumber = new PolicyNumber();
       const lines = {
         0: '                           ',
         1: ' _     _  _     _  _  _  _ ',
-        2: '| |  | _| _||_||_ |_   ||_|',
-        3: '|_|  ||_  _|  | _||_|  ||_|',
+        2: '| |  | _| _||_||_ |_ |_||_|',
+        3: '|_|  ||_  _|  | _||_||_||_|',
       };
       const number = policyNumber.parseLines(lines);
-      assert.equal(number, '012345678 ERR');
+      assert.equal(number, '012345688 ERR');
     });
     it('should return 008008000', function () {
       const policyNumber = new PolicyNumber();
@@ -26,7 +26,7 @@ describe('Testing PolicyNumber methods', function () {
       const number = policyNumber.parseLines(lines);
       assert.equal(number, '008008000');
     });
-    it('should return 008008000 ILL', function () {
+    it('should return 008008000', function () {
       const policyNumber = new PolicyNumber();
       const lines = {
         0: '                           ',
@@ -35,7 +35,18 @@ describe('Testing PolicyNumber methods', function () {
         3: '|_||_||_||_||_||_||_||_||_|',
       };
       const number = policyNumber.parseLines(lines);
-      assert.equal(number, '0?80080?0 ILL');
+      assert.equal(number, '008008000');
+    });
+    it('should return 0?80080?8 ILL', function () {
+      const policyNumber = new PolicyNumber();
+      const lines = {
+        0: '                           ',
+        1: ' _     _  _  _  _  _     _ ',
+        2: '| || ||_|| || ||_|| || ||_|',
+        3: '|_||_||_||_||_||_||_||_||_|',
+      };
+      const number = policyNumber.parseLines(lines);
+      assert.equal(number, '0?80080?8 ILL');
     });
     it('should return ?????????', function () {
       const policyNumber = new PolicyNumber();
@@ -47,6 +58,30 @@ describe('Testing PolicyNumber methods', function () {
       };
       const number = policyNumber.parseLines(lines);
       assert.equal(number, '?????????');
+    });
+
+    it('should return 457508000', function () {
+      const policyNumber = new PolicyNumber();
+      const lines = {
+        0: '                           ',
+        1: '    _  _  _  _  _  _  _  _ ',
+        2: '|_||_   ||_ | ||_|| || || |',
+        3: '  | _|  | _||_||_||_||_||_|',
+      };
+      const number = policyNumber.parseLines(lines);
+      assert.equal(number, '457508000');
+    });
+
+    it('457908000 parsed should be corrected and returned 457508000', function () {
+      const policyNumber = new PolicyNumber();
+      const lines = {
+        0: '                           ',
+        1: '    _  _  _  _  _  _  _  _ ',
+        2: '|_||_   ||_|| ||_|| || || |',
+        3: '  | _|  | _||_||_||_||_||_|',
+      };
+      const number = policyNumber.parseLines(lines);
+      assert.equal(number, '457508000');
     });
   });
 
@@ -105,6 +140,10 @@ describe('Testing PolicyNumber methods', function () {
     it('457508001 should return false', function () {
       const policyNumber = new PolicyNumber();
       assert.equal(policyNumber.isValid('457508001'.split('')), false);
+    });
+    it('008008000 should return true', function () {
+      const policyNumber = new PolicyNumber();
+      assert.equal(policyNumber.isValid('008008000'.split('')), true);
     });
   });
 });
