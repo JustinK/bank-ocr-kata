@@ -25,8 +25,9 @@ async function processPolicyNumberList() {
 
   // go through each line in file and on each 4th line parse the input
   lineReader.on('line', (line) => {
+    const lastLine = 3;
     lines[policyLineCount] = line;
-    if (policyLineCount === 3) {
+    if (policyLineCount === lastLine) {
       lines[policyLineCount] = line;
       const policyNumber = new PolicyNumber();
       const number = policyNumber.parseLines(lines);

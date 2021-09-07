@@ -30,22 +30,13 @@ export default class PolicyNumber {
     // If status is 'ILL' or 'ERR' attempt to find a valid alternative
     if (status !== this.statuses.Valid) {
       const alternates = this.getAlternates(digits, rawInputDigits);
-      if (status === this.statuses.Illegible) {
-        let tempDigits = this.findAlternateIll(digits, alternates.illegible);
-        if (this.getNumber(digits) !== this.getNumber(tempDigits)) {
-          digits = [...tempDigits];
-        }
-        status = this.getStatus(digits);
-      }
-      if (status === this.statuses.Error) {
-        let tempDigits = this.findAlternateAmb(digits, alternates.ambiguous);
-        if (tempDigits.length > 1) {
-          status = this.statuses.Ambigious;
-        } else if (this.getNumber(digits) !== this.getNumber(tempDigits[0])) {
-          digits = [...tempDigits[0]];
-          status = this.getStatus(digits);
-        }
-      }
+      let alts =
+        status === this.statuses.Illegible
+          ? alternates.illegible
+          : alternates.ambiguous;
+      let res = this.findAlternateNumber(digits, alts, status);
+      digits = res.digits;
+      status = res.status;
     }
 
     let returnValue = `${this.getNumber(digits)}`;
@@ -162,7 +153,7 @@ export default class PolicyNumber {
           break;
         case '?':
           let alt = this.findCloseMatch(rawInputDigits[i]);
-          illegible.push([alt]);
+          illegible.push(alt);
           break;
         default:
           break;
@@ -225,7 +216,7 @@ export default class PolicyNumber {
         closeMatches.push(parseInt(key));
       }
     });
-    return closeMatches.length === 1 ? closeMatches[0] : '?';
+    return closeMatches.length >= 1 ? closeMatches : ['?'];
   };
   findAlternateIll = (digits, illegible) => {
     let illDigits = illegible.map((el) => el[0]);
@@ -236,32 +227,55 @@ export default class PolicyNumber {
     }
   };
 
-  findAlternateAmb = (digits, ambiguous) => {
+  findAlternateNumber = (digits, ambiguous, currentStatus) => {
     // example:
     // digits => [4, 9, 1, 5, 0, 8, 0, 0, 0]
-    // ambiguous digits => [[4], [8, 5], [7], [9], [8], [9, 6], [8], [8], [8]]
+    // ambiguous/illegible digits => [[4], [8, 5], [7], [9], [8], [9, 6], [8], [8], [8]]
     // loop through digits
     // check if index has ambiguous options
     // loop through options and test if resulting policy number is valid
     let validPolicyNumbers = [];
-
-    for (let i = 0; i < digits.length; i++) {
-      if (!ambiguous[i].includes(digits[i])) {
-        for (let j = 0; j < ambiguous[i].length; j++) {
-          let tempDigits = [...digits];
-          tempDigits[i] = ambiguous[i][j];
-          if (this.isValid(tempDigits)) {
-            validPolicyNumbers.push(tempDigits);
+    let res = {
+      digits: digits,
+      status: currentStatus,
+    };
+    if (currentStatus === this.statuses.Illegible) {
+      let possibleNumbers = this.findAllCombinations(ambiguous);
+      possibleNumbers.forEach((p) => {
+        if (this.isValid(p)) {
+          validPolicyNumbers.push(p);
+        }
+      });
+    }
+    if (currentStatus === this.statuses.Error) {
+      for (let i = 0; i < digits.length; i++) {
+        if (!ambiguous[i].includes(digits[i])) {
+          for (let j = 0; j < ambiguous[i].length; j++) {
+            let tempDigits = [...digits];
+            tempDigits[i] = ambiguous[i][j];
+            if (this.isValid(tempDigits)) {
+              validPolicyNumbers.push(tempDigits);
+            }
           }
         }
       }
     }
+
     if (validPolicyNumbers.length > 1) {
-      console.log(validPolicyNumbers);
-      return validPolicyNumbers;
+      res.digits = digits;
+      res.status = this.statuses.Ambigious;
+      return res;
     } else if (validPolicyNumbers.length === 1) {
-      return [validPolicyNumbers[0]];
+      res.digits = validPolicyNumbers[0];
+      res.status = this.statuses.Valid;
+      return res;
     }
-    return [digits];
+    res.status = currentStatus;
+    res.digits = digits;
+    return res;
+  };
+
+  findAllCombinations = (arr) => {
+    return arr.reduce((a, b) => a.flatMap((d) => b.map((e) => [d, e].flat())));
   };
 }
