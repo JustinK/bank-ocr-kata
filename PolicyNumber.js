@@ -1,6 +1,6 @@
-const rawDigits = require('./rawDigits');
+import { RawDigits } from './rawDigits.js';
 
-module.exports = class PolicyNumber {
+export default class PolicyNumber {
   statuses = {
     Illegible: 'ILL',
     Error: 'ERR',
@@ -43,6 +43,7 @@ module.exports = class PolicyNumber {
           status = this.statuses.Ambigious;
         } else if (this.getNumber(digits) !== this.getNumber(tempDigits[0])) {
           digits = [...tempDigits[0]];
+          status = this.getStatus(digits);
         }
       }
     }
@@ -89,25 +90,25 @@ module.exports = class PolicyNumber {
 
   parseDigit = (input) => {
     switch (input) {
-      case rawDigits.ZERO:
+      case RawDigits.ZERO:
         return 0;
-      case rawDigits.ONE:
+      case RawDigits.ONE:
         return 1;
-      case rawDigits.TWO:
+      case RawDigits.TWO:
         return 2;
-      case rawDigits.THREE:
+      case RawDigits.THREE:
         return 3;
-      case rawDigits.FOUR:
+      case RawDigits.FOUR:
         return 4;
-      case rawDigits.FIVE:
+      case RawDigits.FIVE:
         return 5;
-      case rawDigits.SIX:
+      case RawDigits.SIX:
         return 6;
-      case rawDigits.SEVEN:
+      case RawDigits.SEVEN:
         return 7;
-      case rawDigits.EIGHT:
+      case RawDigits.EIGHT:
         return 8;
-      case rawDigits.NINE:
+      case RawDigits.NINE:
         return 9;
       default:
         return '?';
@@ -186,34 +187,34 @@ module.exports = class PolicyNumber {
       9: 0,
     };
     for (let i = 0; i < rawInput.length; i++) {
-      if (rawInput[i] === rawDigits.ZERO[i]) {
+      if (rawInput[i] === RawDigits.ZERO[i]) {
         matchCount[0] = matchCount[0] + 1;
       }
-      if (rawInput[i] === rawDigits.ONE[i]) {
+      if (rawInput[i] === RawDigits.ONE[i]) {
         matchCount[1] = matchCount[1] + 1;
       }
-      if (rawInput[i] === rawDigits.TWO[i]) {
+      if (rawInput[i] === RawDigits.TWO[i]) {
         matchCount[2] = matchCount[2] + 1;
       }
-      if (rawInput[i] === rawDigits.THREE[i]) {
+      if (rawInput[i] === RawDigits.THREE[i]) {
         matchCount[3] = matchCount[3] + 1;
       }
-      if (rawInput[i] === rawDigits.FOUR[i]) {
+      if (rawInput[i] === RawDigits.FOUR[i]) {
         matchCount[4] = matchCount[4] + 1;
       }
-      if (rawInput[i] === rawDigits.FIVE[i]) {
+      if (rawInput[i] === RawDigits.FIVE[i]) {
         matchCount[5] = matchCount[5] + 1;
       }
-      if (rawInput[i] === rawDigits.SIX[i]) {
+      if (rawInput[i] === RawDigits.SIX[i]) {
         matchCount[6] = matchCount[6] + 1;
       }
-      if (rawInput[i] === rawDigits.SEVEN[i]) {
+      if (rawInput[i] === RawDigits.SEVEN[i]) {
         matchCount[7] = matchCount[7] + 1;
       }
-      if (rawInput[i] === rawDigits.EIGHT[i]) {
+      if (rawInput[i] === RawDigits.EIGHT[i]) {
         matchCount[8] = matchCount[8] + 1;
       }
-      if (rawInput[i] === rawDigits.NINE[i]) {
+      if (rawInput[i] === RawDigits.NINE[i]) {
         matchCount[9] = matchCount[9] + 1;
       }
     }
@@ -256,8 +257,11 @@ module.exports = class PolicyNumber {
       }
     }
     if (validPolicyNumbers.length > 1) {
+      console.log(validPolicyNumbers);
       return validPolicyNumbers;
+    } else if (validPolicyNumbers.length === 1) {
+      return [validPolicyNumbers[0]];
     }
     return [digits];
   };
-};
+}
