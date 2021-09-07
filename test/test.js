@@ -128,6 +128,7 @@ describe('Testing PolicyNumber methods', function () {
       equal(digit, 9);
     });
   });
+
   describe('isValid()', function () {
     it('345882865 should return true', function () {
       const policyNumber = new PolicyNumber();
@@ -144,6 +145,70 @@ describe('Testing PolicyNumber methods', function () {
     it('008008000 should return true', function () {
       const policyNumber = new PolicyNumber();
       equal(policyNumber.isValid('008008000'.split('')), true);
+    });
+  });
+  describe('findAllCombinations()', function () {
+    it('should match sample output', function () {
+      const policyNumber = new PolicyNumber();
+      const testInput = [[4], [8, 5], [7], [9], [8], [9, 6], [8], [8], [8]];
+      const output = policyNumber.findAllCombinations(testInput);
+      const testOutput =
+        '[[4,8,7,9,8,9,8,8,8],[4,8,7,9,8,6,8,8,8],[4,5,7,9,8,9,8,8,8],[4,5,7,9,8,6,8,8,8]]';
+      equal(JSON.stringify(output), testOutput);
+    });
+  });
+  describe('getStatus()', function () {
+    it('should return "ILL"', function () {
+      const policyNumber = new PolicyNumber();
+      const output = policyNumber.getStatus(['?', 3, 3, 3, 4, 5, 1, 2, 3]);
+      equal(output, 'ILL');
+    });
+    it('should return "ERR"', function () {
+      const policyNumber = new PolicyNumber();
+      const output = policyNumber.getStatus([4, 5, 9, 5, 0, 8, 0, 0, 0]);
+      equal(output, 'ERR');
+    });
+    it('should return ""', function () {
+      const policyNumber = new PolicyNumber();
+      const output = policyNumber.getStatus([4, 5, 7, 5, 0, 8, 0, 0, 0]);
+      equal(output, '');
+    });
+  });
+  describe('findCloseMatch()', function () {
+    it('should match sample output', function () {
+      const policyNumber = new PolicyNumber();
+      const testInput = '    _| _|';
+      const output = policyNumber.findCloseMatch(testInput);
+      const testOutput = '[3]';
+      equal(JSON.stringify(output), testOutput);
+    });
+    it('should match sample output', function () {
+      const policyNumber = new PolicyNumber();
+      const testInput = '    _|  |';
+      const output = policyNumber.findCloseMatch(testInput);
+      const testOutput = '[1,4]';
+      equal(JSON.stringify(output), testOutput);
+    });
+  });
+  describe('getAlternates()', function () {
+    it('should match sample output', function () {
+      const policyNumber = new PolicyNumber();
+      const testInput1 = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+      const testInput2 = [
+        ' _ | ||_|',
+        '     |  |',
+        ' _  _||_ ',
+        ' _  _| _|',
+        '   |_|  |',
+        ' _ |_  _|',
+        ' _ |_ |_|',
+        ' _   |  |',
+        ' _ |_||_|',
+      ];
+      const output = policyNumber.getAlternates(testInput1, testInput2);
+      const testOutput =
+        '{"ambiguous":[[8],[7],[2],[9],[4],[9,6],[8,5],[1],[9,6]],"illegible":[[0],[1],[2],[3],[4],[5],[6],[7],[8]]}';
+      equal(JSON.stringify(output), testOutput);
     });
   });
 });

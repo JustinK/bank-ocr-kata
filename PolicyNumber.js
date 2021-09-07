@@ -273,6 +273,14 @@ export default class PolicyNumber {
   };
 
   findAllCombinations = (arr) => {
+    /* returns caretesian product of arrays to get all possible policy numbers
+       For example:
+       this input: [[4], [8, 5], [7], [9], [8], [9, 6], [8], [8], [8]]
+       will return [ [ 4, 8, 7, 9, 8, 9, 8, 8, 8 ], 
+                     [ 4, 8, 7, 9, 8, 6, 8, 8, 8 ], 
+                     [ 4, 5, 7, 9, 8, 9, 8, 8, 8 ], 
+                     [ 4, 5, 7, 9, 8, 6, 8, 8, 8 ] ]
+    */
     return arr.reduce((a, b) => a.flatMap((d) => b.map((e) => [d, e].flat())));
   };
 }
