@@ -188,10 +188,10 @@ describe('Testing PolicyNumber methods', function () {
       const output = policyNumber.getStatus([4, 5, 9, 5, 0, 8, 0, 0, 0]);
       equal(output, 'ERR');
     });
-    it('should return ""', function () {
+    it('should return "VAL"', function () {
       const policyNumber = new PolicyNumber();
       const output = policyNumber.getStatus([4, 5, 7, 5, 0, 8, 0, 0, 0]);
-      equal(output, '');
+      equal(output, 'VAL');
     });
   });
   describe('findCloseMatch()', function () {

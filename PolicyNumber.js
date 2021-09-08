@@ -5,7 +5,7 @@ export default class PolicyNumber {
     Illegible: 'ILL',
     Error: 'ERR',
     Ambigious: 'AMB',
-    Valid: '',
+    Valid: 'VAL',
   };
 
   constructor() {}
@@ -39,11 +39,12 @@ export default class PolicyNumber {
       status = res.status;
     }
 
-    let returnValue = `${this.getNumber(digits)}`;
-    if (status !== this.statuses.Valid) {
-      returnValue = `${returnValue} ${status}`;
+    let parsedNumber = `${this.getNumber(digits)}`;
+    if (status === this.statuses.Valid) {
+      return `${parsedNumber}`;
+    } else {
+      return `${parsedNumber} ${status}`;
     }
-    return returnValue;
   };
 
   isInputValid = (lines) => {
