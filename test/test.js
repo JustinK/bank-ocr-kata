@@ -157,6 +157,26 @@ describe('Testing PolicyNumber methods', function () {
       equal(JSON.stringify(output), testOutput);
     });
   });
+  describe('findAlternateNumber()', function () {
+    it('should match sample output', function () {
+      const policyNumber = new PolicyNumber();
+      const digits = [8, 8, 8, 8, 8, 8, 8, 8, 8];
+      const ambiguous = [
+        [9, 6, 0],
+        [9, 6, 0],
+        [9, 6, 0],
+        [9, 6, 0],
+        [9, 6, 0],
+        [9, 6, 0],
+        [9, 6, 0],
+        [9, 6, 0],
+        [9, 6, 0],
+      ];
+      const output = policyNumber.findAlternateNumber(digits, ambiguous, 'ERR');
+      const testOutput = '{"digits":[8,8,8,8,8,8,8,8,8],"status":"AMB"}';
+      equal(JSON.stringify(output), testOutput);
+    });
+  });
   describe('getStatus()', function () {
     it('should return "ILL"', function () {
       const policyNumber = new PolicyNumber();
@@ -189,6 +209,13 @@ describe('Testing PolicyNumber methods', function () {
       const testOutput = '[1,4]';
       equal(JSON.stringify(output), testOutput);
     });
+    it('should match sample output', function () {
+      const policyNumber = new PolicyNumber();
+      const testInput = '    _   |';
+      const output = policyNumber.findCloseMatch(testInput);
+      const testOutput = '["?"]';
+      equal(JSON.stringify(output), testOutput);
+    });
   });
   describe('getAlternates()', function () {
     it('should match sample output', function () {
@@ -207,7 +234,7 @@ describe('Testing PolicyNumber methods', function () {
       ];
       const output = policyNumber.getAlternates(testInput1, testInput2);
       const testOutput =
-        '{"ambiguous":[[8],[7],[2],[9],[4],[9,6],[8,5],[1],[9,6]],"illegible":[[0],[1],[2],[3],[4],[5],[6],[7],[8]]}';
+        '{"ambiguous":[[8],[7],[2],[9],[4],[9,6],[8,5],[1],[9,6,0]],"illegible":[[0],[1],[2],[3],[4],[5],[6],[7],[8]]}';
       equal(JSON.stringify(output), testOutput);
     });
   });

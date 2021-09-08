@@ -5,7 +5,7 @@
   "main": "main.js",
   "type": "module",
   "scripts": {
-    "test": "mocha",
+    "test": "c8 --reporter=text --all mocha",
     "processor": "node main.js"
   },
   "repository": {
@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/JustinK/kin-ocr-challenge#readme",
   "devDependencies": {
+    "c8": "^7.8.0",
     "mocha": "^9.1.1"
   }
 }

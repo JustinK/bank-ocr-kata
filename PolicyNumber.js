@@ -147,7 +147,7 @@ export default class PolicyNumber {
           illegible.push([7]);
           break;
         case 8:
-          ambiguous.push([9, 6]);
+          ambiguous.push([9, 6, 0]);
           illegible.push([8]);
           break;
         case 9:
@@ -273,7 +273,7 @@ export default class PolicyNumber {
   };
 
   findAllCombinations = (arr) => {
-    /* returns caretesian product of arrays to get all possible policy numbers
+    /* returns cartesian product of arrays to get all possible policy numbers
        For example:
        this input: [[4], [8, 5], [7], [9], [8], [9, 6], [8], [8], [8]]
        will return [ [ 4, 8, 7, 9, 8, 9, 8, 8, 8 ], 
