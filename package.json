@@ -5,7 +5,7 @@
   "main": "main.js",
   "type": "module",
   "scripts": {
-    "test": "c8 --reporter=text --all mocha",
+    "test": "c8 --reporter=text --all -x main.js mocha",
     "processor": "node main.js"
   },
   "repository": {

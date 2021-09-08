@@ -1,6 +1,6 @@
 import { equal } from 'assert';
 import PolicyNumber from '../PolicyNumber.js';
-import { RawDigits } from '../RawDigits.js';
+import { RawDigits } from '../rawDigits.js';
 
 describe('Testing PolicyNumber methods', function () {
   describe('parseLines()', function () {
