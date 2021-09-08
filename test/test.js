@@ -4,6 +4,11 @@ import { RawDigits } from '../rawDigits.js';
 
 describe('Testing PolicyNumber methods', function () {
   describe('parseLines()', function () {
+    const printNumber = (lines) => {
+      console.log(`        ${lines[1]}`);
+      console.log(`        ${lines[2]}`);
+      console.log(`        ${lines[3]}`);
+    };
     it('should return 012345688 ERR', function () {
       const policyNumber = new PolicyNumber();
       const lines = {
@@ -12,6 +17,7 @@ describe('Testing PolicyNumber methods', function () {
         2: '| |  | _| _||_||_ |_ |_||_|',
         3: '|_|  ||_  _|  | _||_||_||_|',
       };
+      printNumber(lines);
       const number = policyNumber.parseLines(lines);
       equal(number, '012345688 ERR');
     });
@@ -23,8 +29,21 @@ describe('Testing PolicyNumber methods', function () {
         2: '| || ||_|| || ||_|| || || |',
         3: '|_||_||_||_||_||_||_||_||_|',
       };
+      printNumber(lines);
       const number = policyNumber.parseLines(lines);
       equal(number, '008008000');
+    });
+    it('should return 888888888 AMB', function () {
+      const policyNumber = new PolicyNumber();
+      const lines = {
+        0: '                           ',
+        1: ' _  _  _  _  _  _  _  _  _ ',
+        2: '|_||_||_||_||_||_||_||_||_|',
+        3: '|_||_||_||_||_||_||_||_||_|',
+      };
+      printNumber(lines);
+      const number = policyNumber.parseLines(lines);
+      equal(number, '888888888 AMB');
     });
     it('should return 008008000', function () {
       const policyNumber = new PolicyNumber();
@@ -34,6 +53,7 @@ describe('Testing PolicyNumber methods', function () {
         2: '| || ||_|| || ||_|| || || |',
         3: '|_||_||_||_||_||_||_||_||_|',
       };
+      printNumber(lines);
       const number = policyNumber.parseLines(lines);
       equal(number, '008008000');
     });
@@ -45,6 +65,7 @@ describe('Testing PolicyNumber methods', function () {
         2: '| || ||_|| || ||_|| || ||_|',
         3: '|_||_||_||_||_||_||_||_||_|',
       };
+      printNumber(lines);
       const number = policyNumber.parseLines(lines);
       equal(number, '0?80080?8 ILL');
     });
@@ -52,10 +73,11 @@ describe('Testing PolicyNumber methods', function () {
       const policyNumber = new PolicyNumber();
       const lines = {
         0: '                           ',
-        1: ' _  _  _  _  _  _  _  _  _', //this line has 26 characters
-        2: '| || ||_|| || ||_|| || || |',
-        3: '|_||_||_||_||_||_||_||_||_|',
+        1: ' _  _  _  _  _  _ ', //this line has 26 characters
+        2: '| || ||_|| || ||_|| || |',
+        3: '|_||_||_||_||_|',
       };
+      printNumber(lines);
       const number = policyNumber.parseLines(lines);
       equal(number, '?????????');
     });
@@ -68,6 +90,7 @@ describe('Testing PolicyNumber methods', function () {
         2: '|_||_   ||_ | ||_|| || || |',
         3: '  | _|  | _||_||_||_||_||_|',
       };
+      printNumber(lines);
       const number = policyNumber.parseLines(lines);
       equal(number, '457508000');
     });
@@ -80,6 +103,7 @@ describe('Testing PolicyNumber methods', function () {
         2: '|_||_   ||_|| ||_|| || || |',
         3: '  | _|  | _||_||_||_||_||_|',
       };
+      printNumber(lines);
       const number = policyNumber.parseLines(lines);
       equal(number, '457508000');
     });
