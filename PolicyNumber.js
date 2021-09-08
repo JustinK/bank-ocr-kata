@@ -29,7 +29,7 @@ export default class PolicyNumber {
 
     // If status is 'ILL' or 'ERR' attempt to find a valid alternative
     if (status !== this.statuses.Valid) {
-      const alternates = this.getAlternates(digits, rawInputDigits);
+      const alternates = this.getAlternateDigits(digits, rawInputDigits);
       let alts =
         status === this.statuses.Illegible
           ? alternates.illegible
@@ -109,7 +109,7 @@ export default class PolicyNumber {
     }
   };
 
-  getAlternates = (digits, rawInputDigits) => {
+  getAlternateDigits = (digits, rawInputDigits) => {
     let illegible = [];
     let ambiguous = [];
     for (let i = 0; i <= digits.length; i++) {

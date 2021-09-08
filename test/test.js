@@ -232,7 +232,7 @@ describe('Testing PolicyNumber methods', function () {
         ' _   |  |',
         ' _ |_||_|',
       ];
-      const output = policyNumber.getAlternates(testInput1, testInput2);
+      const output = policyNumber.getAlternateDigits(testInput1, testInput2);
       const testOutput =
         '{"ambiguous":[[8],[7],[2],[9],[4],[9,6],[8,5],[1],[9,6,0]],"illegible":[[0],[1],[2],[3],[4],[5],[6],[7],[8]]}';
       equal(JSON.stringify(output), testOutput);
