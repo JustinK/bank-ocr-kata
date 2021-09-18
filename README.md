@@ -12,20 +12,13 @@ Intructions:
 4. run 'npm run processor' to run program using default file (output/test.txt)
 
 
-## Bank OCR
+# Bank OCR Kata
 From [Coding Dojo](https://codingdojo.org/kata/BankOCR/)
 
 
 This Kata was presented at XP2006 by EmmanuelGaillot and ChristopheThibaut .
  
-Contents:
-
-Problem Description
-Clues
-Suggested Test Cases
-Resources
-Comments from those who are working on this Kata
-Problem Description
+## Problem Description
 ### User Story 1
 You work for a bank, which has recently purchased an ingenious machine to assist in reading letters and faxes sent in by branch offices. The machine scans the paper documents, and produces a file with a number of entries which each look like this:
 
@@ -68,7 +61,7 @@ It turns out that often when a number comes back as ERR or ILL it is because the
 ```
 The 9 could be an 8 if the scanner had missed one |. Or the 0 could be an 8. Or the 1 could be a 7. The 5 could be a 9 or 6. So your next task is to look at numbers that have come back as ERR or ILL, and try to guess what they should be, by adding or removing just one pipe or underscore. If there is only one possible number with a valid checksum, then use that. If there are several options, the status should be AMB. If you still can’t work out what it should be, the status should be reported ILL.
 
-Clues
+## Clues
 I recommend finding a way to write out 3x3 cells on 3 lines in your code, so they form an identifiable digits. Even if your code actually doesn’t represent them like that internally. I’d much rather read
 ```
 "   " +
@@ -89,7 +82,7 @@ Some gotchas to avoid:
 Be very careful to read the definition of checksum correctly. It is not a simple dot product, the digits are reversed from what you expect.
 The spec does not list all the possible alternatives for valid digits when one pipe or underscore has been removed or added
 Don’t forget to try to work out what a ? should have been by adding or removing one pipe or underscore.
-Suggested Test Cases
+## Suggested Test Cases
 If you want to just copy and paste these test cases into your editor, I suggest first clicking “edit this page” so you can see the source. Then you can be sure to copy across all the whitespace necessary. Just don’t save any changes by mistake.
 
 ```
