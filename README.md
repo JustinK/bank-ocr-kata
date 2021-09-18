@@ -1,4 +1,3 @@
-## Bank OCR Kata
 
 Dependencies to run this project:
 
@@ -13,7 +12,8 @@ Intructions:
 
 
 # Bank OCR Kata
-From [Coding Dojo](https://codingdojo.org/kata/BankOCR/)
+
+This repo is my take on solving the Coding Dojo described here: [Coding Dojo](https://codingdojo.org/kata/BankOCR/)
 
 
 This Kata was presented at XP2006 by EmmanuelGaillot and ChristopheThibaut .
