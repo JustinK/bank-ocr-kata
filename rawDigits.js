@@ -1,5 +1,5 @@
 // prettier-ignore
-module.exports = RawDigits = {
+export const RawDigits = {
   ZERO: 
     ' _ ' + 
     '| |' + 

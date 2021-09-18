@@ -1,6 +1,6 @@
-const fs = require('fs');
-const readline = require('readline');
-const PolicyNumber = require('./PolicyNumber');
+import { createReadStream, createWriteStream } from 'fs';
+import { createInterface } from 'readline';
+import PolicyNumber from './PolicyNumber.js';
 async function processPolicyNumberList() {
   // parse 'filepath' input from terminal
   // for example: npm run processor --filepath=input/test2.txt
@@ -14,19 +14,20 @@ async function processPolicyNumberList() {
     3: null,
   };
   // open file and read line by line
-  const lineReader = readline.createInterface({
-    input: fs.createReadStream(filePath),
+  const lineReader = createInterface({
+    input: createReadStream(filePath),
   });
 
   // open file write stream to write to as policy numbers are parsed
-  const writer = fs.createWriteStream(`output/${Date.now()}_output.text`, {
+  const writer = createWriteStream(`output/${Date.now()}_output.text`, {
     flags: 'a',
   });
 
   // go through each line in file and on each 4th line parse the input
   lineReader.on('line', (line) => {
+    const lastLine = 3;
     lines[policyLineCount] = line;
-    if (policyLineCount === 3) {
+    if (policyLineCount === lastLine) {
       lines[policyLineCount] = line;
       const policyNumber = new PolicyNumber();
       const number = policyNumber.parseLines(lines);

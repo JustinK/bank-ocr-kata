@@ -1,10 +1,11 @@
-const rawDigits = require('./rawDigits');
+import { RawDigits } from './rawDigits.js';
 
-module.exports = class PolicyNumber {
+export default class PolicyNumber {
   statuses = {
     Illegible: 'ILL',
     Error: 'ERR',
     Ambigious: 'AMB',
+    Valid: 'VAL',
   };
 
   constructor() {}
@@ -27,17 +28,25 @@ module.exports = class PolicyNumber {
     let status = this.getStatus(digits);
 
     // If status is 'ILL' or 'ERR' attempt to find a valid alternative
-    if (status === this.statuses.Illegible || status === this.statuses.Error) {
-      const alternates = this.getAlternates(digits, rawInputDigits);
-      digits = this.findAlternateIll(digits, alternates.illegible);
-      status = this.getStatus(digits);
+    if (status !== this.statuses.Valid) {
+      const alternates = this.getAlternateDigits(digits, rawInputDigits);
+      let alts =
+        status === this.statuses.Illegible
+          ? alternates.illegible
+          : alternates.ambiguous;
+      let res = this.findAlternateNumber(digits, alts, status);
+      digits = res.digits;
+      status = res.status;
     }
-    let returnValue = `${this.getNumber(digits)}`;
-    if (status !== '') {
-      returnValue = `${returnValue} ${status}`;
+
+    let parsedNumber = `${this.getNumber(digits)}`;
+    if (status === this.statuses.Valid) {
+      return `${parsedNumber}`;
+    } else {
+      return `${parsedNumber} ${status}`;
     }
-    return returnValue;
   };
+
   isInputValid = (lines) => {
     // TODO: add additional validation to check that only valid characters are included
     if (
@@ -53,6 +62,7 @@ module.exports = class PolicyNumber {
   getNumber = (digits) => {
     return digits.join('');
   };
+
   getStatus = (digits) => {
     if (digits.includes('?')) {
       return this.statuses.Illegible;
@@ -60,8 +70,9 @@ module.exports = class PolicyNumber {
     if (!this.isValid(digits)) {
       return this.statuses.Error;
     }
-    return '';
+    return this.statuses.Valid;
   };
+
   isValid = (digits) => {
     return (
       digits.reduce((prev, curr, i) => {
@@ -74,32 +85,32 @@ module.exports = class PolicyNumber {
 
   parseDigit = (input) => {
     switch (input) {
-      case rawDigits.ZERO:
+      case RawDigits.ZERO:
         return 0;
-      case rawDigits.ONE:
+      case RawDigits.ONE:
         return 1;
-      case rawDigits.TWO:
+      case RawDigits.TWO:
         return 2;
-      case rawDigits.THREE:
+      case RawDigits.THREE:
         return 3;
-      case rawDigits.FOUR:
+      case RawDigits.FOUR:
         return 4;
-      case rawDigits.FIVE:
+      case RawDigits.FIVE:
         return 5;
-      case rawDigits.SIX:
+      case RawDigits.SIX:
         return 6;
-      case rawDigits.SEVEN:
+      case RawDigits.SEVEN:
         return 7;
-      case rawDigits.EIGHT:
+      case RawDigits.EIGHT:
         return 8;
-      case rawDigits.NINE:
+      case RawDigits.NINE:
         return 9;
       default:
         return '?';
     }
   };
 
-  getAlternates = (digits, rawInputDigits) => {
+  getAlternateDigits = (digits, rawInputDigits) => {
     let illegible = [];
     let ambiguous = [];
     for (let i = 0; i <= digits.length; i++) {
@@ -125,7 +136,7 @@ module.exports = class PolicyNumber {
           illegible.push([4]);
           break;
         case 5:
-          ambiguous.push([9]);
+          ambiguous.push([9, 6]);
           illegible.push([5]);
           break;
         case 6:
@@ -137,7 +148,7 @@ module.exports = class PolicyNumber {
           illegible.push([7]);
           break;
         case 8:
-          ambiguous.push([9, 6]);
+          ambiguous.push([9, 6, 0]);
           illegible.push([8]);
           break;
         case 9:
@@ -145,8 +156,7 @@ module.exports = class PolicyNumber {
           illegible.push([9]);
           break;
         case '?':
-          let alt = this.findCloseMatch(rawInputDigits[i]);
-          illegible.push([alt]);
+          illegible.push(this.findCloseMatch(rawInputDigits[i]));
           break;
         default:
           break;
@@ -154,6 +164,7 @@ module.exports = class PolicyNumber {
     }
     return { ambiguous, illegible };
   };
+
   findCloseMatch = (rawInput) => {
     // this function will compare illegible input against known valid inputs
     // count all number of matches between input and digits 0-9
@@ -171,34 +182,34 @@ module.exports = class PolicyNumber {
       9: 0,
     };
     for (let i = 0; i < rawInput.length; i++) {
-      if (rawInput[i] === rawDigits.ZERO[i]) {
+      if (rawInput[i] === RawDigits.ZERO[i]) {
         matchCount[0] = matchCount[0] + 1;
       }
-      if (rawInput[i] === rawDigits.ONE[i]) {
+      if (rawInput[i] === RawDigits.ONE[i]) {
         matchCount[1] = matchCount[1] + 1;
       }
-      if (rawInput[i] === rawDigits.TWO[i]) {
+      if (rawInput[i] === RawDigits.TWO[i]) {
         matchCount[2] = matchCount[2] + 1;
       }
-      if (rawInput[i] === rawDigits.THREE[i]) {
+      if (rawInput[i] === RawDigits.THREE[i]) {
         matchCount[3] = matchCount[3] + 1;
       }
-      if (rawInput[i] === rawDigits.FOUR[i]) {
+      if (rawInput[i] === RawDigits.FOUR[i]) {
         matchCount[4] = matchCount[4] + 1;
       }
-      if (rawInput[i] === rawDigits.FIVE[i]) {
+      if (rawInput[i] === RawDigits.FIVE[i]) {
         matchCount[5] = matchCount[5] + 1;
       }
-      if (rawInput[i] === rawDigits.SIX[i]) {
+      if (rawInput[i] === RawDigits.SIX[i]) {
         matchCount[6] = matchCount[6] + 1;
       }
-      if (rawInput[i] === rawDigits.SEVEN[i]) {
+      if (rawInput[i] === RawDigits.SEVEN[i]) {
         matchCount[7] = matchCount[7] + 1;
       }
-      if (rawInput[i] === rawDigits.EIGHT[i]) {
+      if (rawInput[i] === RawDigits.EIGHT[i]) {
         matchCount[8] = matchCount[8] + 1;
       }
-      if (rawInput[i] === rawDigits.NINE[i]) {
+      if (rawInput[i] === RawDigits.NINE[i]) {
         matchCount[9] = matchCount[9] + 1;
       }
     }
@@ -209,14 +220,68 @@ module.exports = class PolicyNumber {
         closeMatches.push(parseInt(key));
       }
     });
-    return closeMatches.length === 1 ? closeMatches[0] : '?';
+    return closeMatches.length >= 1 ? closeMatches : ['?'];
   };
-  findAlternateIll = (digits, illegible) => {
-    let illDigits = illegible.map((el) => el[0]);
-    if (this.isValid(illDigits)) {
-      return illDigits;
-    } else {
-      return digits;
+
+  findAlternateNumber = (digits, ambiguous, currentStatus) => {
+    // example:
+    // digits => [4, 9, 1, 5, 0, 8, 0, 0, 0]
+    // ambiguous/illegible digits => [[4], [8, 5], [7], [9], [8], [9, 6], [8], [8], [8]]
+    // loop through digits
+    // check if index has ambiguous options
+    // loop through options and test if resulting policy number is valid
+    let validPolicyNumbers = [];
+    let res = {
+      digits: digits,
+      status: currentStatus,
+    };
+    // For illegible digits find all possible permutations and find valid policy numbers
+    if (currentStatus === this.statuses.Illegible) {
+      let possibleNumbers = this.findAllCombinations(ambiguous);
+      possibleNumbers.forEach((p) => {
+        if (this.isValid(p)) {
+          validPolicyNumbers.push(p);
+        }
+      });
     }
+    // For ambigious digits only replace one digit at a time
+    if (currentStatus === this.statuses.Error) {
+      for (let i = 0; i < digits.length; i++) {
+        if (!ambiguous[i].includes(digits[i])) {
+          for (let j = 0; j < ambiguous[i].length; j++) {
+            let tempDigits = [...digits];
+            tempDigits[i] = ambiguous[i][j];
+            if (this.isValid(tempDigits)) {
+              validPolicyNumbers.push(tempDigits);
+            }
+          }
+        }
+      }
+    }
+
+    if (validPolicyNumbers.length > 1) {
+      res.digits = digits;
+      res.status = this.statuses.Ambigious;
+      return res;
+    } else if (validPolicyNumbers.length === 1) {
+      res.digits = validPolicyNumbers[0];
+      res.status = this.statuses.Valid;
+      return res;
+    }
+    res.status = currentStatus;
+    res.digits = digits;
+    return res;
   };
-};
+
+  /* returns cartesian product of arrays to get all possible policy numbers
+       For example:
+       this input: [[4], [8, 5], [7], [9], [8], [9, 6], [8], [8], [8]]
+       will return [ [ 4, 8, 7, 9, 8, 9, 8, 8, 8 ], 
+                     [ 4, 8, 7, 9, 8, 6, 8, 8, 8 ], 
+                     [ 4, 5, 7, 9, 8, 9, 8, 8, 8 ], 
+                     [ 4, 5, 7, 9, 8, 6, 8, 8, 8 ] ]
+    */
+  findAllCombinations = (arr) => {
+    return arr.reduce((a, b) => a.flatMap((d) => b.map((e) => [d, e].flat())));
+  };
+}
