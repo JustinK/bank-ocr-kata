@@ -1,4 +1,4 @@
-# Kin OCR Challenge
+Bank OCR Kata
 
 Dependencies to run this project:
 
